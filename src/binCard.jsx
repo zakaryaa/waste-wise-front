@@ -1,5 +1,5 @@
-import { TRASH_BINS } from "./constants";
-import { TrashBin } from "./trashBin";
+import { TRASH_BINS } from "./Constants";
+import { TrashBin } from "./TrashBin";
 // --- Composant: Carte de Poubelle ---
 export const BinCard = ({
   category,

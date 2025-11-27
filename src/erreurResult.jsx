@@ -1,7 +1,7 @@
 import { XCircle } from "lucide-react";
-import { TRASH_BINS } from "./constants";
-import { RecyclingAdvice } from "./recycleAdvice";
-import { ReplayButton } from "./replayButton";
+import { TRASH_BINS } from "./Constants";
+import { RecyclingAdvice } from "./RecycleAdvice";
+import { ReplayButton } from "./ReplayButton";
 // --- Composant: Résultat Incorrect ---
 export const ErrorResult = ({
   userSelection,

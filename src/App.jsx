@@ -2,14 +2,14 @@ import { Recycle } from "lucide-react";
 
 import { useCallback, useRef, useState } from "react";
 import { BinsGrid } from "./BinsGrid";
-import { API_ENDPOINT, CATEGORIES } from "./constants";
-import { ErrorResult } from "./erreurResult";
-import { ErrorSection } from "./errorSection";
+import { API_ENDPOINT, CATEGORIES } from "./Constants";
+import { ErrorResult } from "./ErreurResult";
+import { ErrorSection } from "./ErrorSection";
 import { ImagePreviewSection } from "./ImagePreviewSection";
 import "./index.css";
-import { StatusText } from "./statusText";
-import { SuccessResult } from "./successResult";
-import { UploadSection } from "./uploadSection";
+import { StatusText } from "./StatusText";
+import { SuccessResult } from "./SuccessResult";
+import { UploadSection } from "./UploadSection";
 
 // --- Composant Principal ---
 const App = () => {

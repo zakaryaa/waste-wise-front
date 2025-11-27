@@ -1,5 +1,5 @@
-import { BinCard } from "./binCard";
-import { CATEGORIES } from "./constants";
+import { BinCard } from "./BinCard";
+import { CATEGORIES } from "./Constants";
 
 // --- Composant: Grille de Poubelles ---
 export const BinsGrid = ({
