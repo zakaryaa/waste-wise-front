@@ -1,5 +1,5 @@
+import { TRASH_BINS } from "../Utils";
 import { TrashBin } from "./TrashBin";
-import { TRASH_BINS } from "./Utils";
 // --- Composant: Carte de Poubelle ---
 export const BinCard = ({
   category,
