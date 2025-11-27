@@ -1,4 +1,4 @@
-// Constants
+// Utils
 // eslint-disable-next-line react-refresh/only-export-components
 export const TRASH_BINS = {
   ORGANIC: { color: "#22c55e", labelEn: "Organic", icon: "🌿" },

@@ -2,7 +2,6 @@ import { Recycle } from "lucide-react";
 
 import { useCallback, useRef, useState } from "react";
 import { BinsTable } from "./BinsTable";
-import { API_ENDPOINT, CATEGORIES } from "./Constants";
 import { ErrorResult } from "./ErreurResult";
 import { ErrorSection } from "./ErrorSection";
 import { ImagePreviewSection } from "./ImagePreviewSection";
@@ -10,6 +9,7 @@ import "./index.css";
 import { StatusText } from "./StatusText";
 import { SuccessResult } from "./SuccessResult";
 import { UploadSection } from "./UploadSection";
+import { API_ENDPOINT, CATEGORIES } from "./Utils";
 
 // --- Composant Principal ---
 const App = () => {

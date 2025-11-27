@@ -1,5 +1,5 @@
 import { BinCard } from "./BinCard";
-import { CATEGORIES } from "./Constants";
+import { CATEGORIES } from "./Utils";
 
 // --- Composant: Grille de Poubelles ---
 export const BinsTable = ({

@@ -1,7 +1,7 @@
 import { CheckCircle } from "lucide-react";
-import { TRASH_BINS } from "./Constants";
 import { RecyclingAdvice } from "./RecycleAdvice";
 import { ReplayButton } from "./ReplayButton";
+import { TRASH_BINS } from "./Utils";
 // --- Composant: Résultat Correct ---
 export const SuccessResult = ({ userSelection, recyclingAdvice, onReplay }) => (
   <div className="p-4 rounded-xl shadow-inner mt-6">
