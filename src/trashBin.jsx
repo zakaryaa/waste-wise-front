@@ -1,35 +1,32 @@
-import { useEffect, useState } from "react";
-
+import { CheckCircle, XCircle } from "lucide-react";
+import { useState } from "react";
 export const TrashBin = ({
-  color = "#e8e8e8",
-  height = 300,
-  width = 250,
-  label = "Trash",
-  isCorrect = false,
-  isChosen = false,
-  gameState,
+  color,
+  label,
+  icon,
+  isCorrect,
+  isChosen,
+  isSelectable,
   onClick,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  useEffect(() => {
-    console.log(isCorrect, isChosen, gameState);
-  }, [isCorrect, isChosen, gameState]);
 
   const handleClick = () => {
+    if (!isSelectable) return;
     setIsOpen(false);
-    setTimeout(() => {
-      setIsOpen(true);
-    }, 10);
+    setTimeout(() => setIsOpen(true), 10);
     onClick?.();
   };
 
-  // Calculate dynamic colors based on the primary color
+  const handleMouseEnter = () => setIsOpen(true);
+  const handleMouseLeave = () => setIsOpen(false);
+
   const getDarkerColor = (hex) => {
     const num = parseInt(hex.replace("#", ""), 16);
     const amt = 30;
-    const R = (num >> 16) - amt;
-    const G = ((num >> 8) & 0x00ff) - amt;
-    const B = (num & 0x0000ff) - amt;
+    const R = Math.max(0, (num >> 16) - amt);
+    const G = Math.max(0, ((num >> 8) & 0x00ff) - amt);
+    const B = Math.max(0, (num & 0x0000ff) - amt);
     return `rgb(${R},${G},${B})`;
   };
 
@@ -45,28 +42,50 @@ export const TrashBin = ({
   const darkerColor = getDarkerColor(color);
   const lighterColor = getLighterColor(color);
 
+  const binStyle = {
+    cursor: isSelectable ? "pointer" : "default",
+    opacity: isSelectable ? 1 : 0.7,
+    transform: isChosen ? "scale(1.05)" : "scale(1)",
+    transition: "all 0.3s ease",
+  };
+
   return (
-    <div className="flex flex-col items-center gap-5">
+    <div
+      style={binStyle}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
+      className="flex flex-col items-center gap-3"
+    >
       <div
-        style={{
-          perspective: "1000px",
-          width: `${width}px`,
-          height: `${height}px`,
-        }}
+        className="relative"
+        style={{ width: "250px", height: "300px", perspective: "1000px" }}
       >
         <svg
           viewBox="0 0 200 300"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full"
+          className="w-full h-full "
           style={{ filter: "drop-shadow(0 10px 30px rgba(0,0,0,0.3))" }}
         >
           <defs>
-            <linearGradient id="binGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id={`gradient-${color}`}
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor={color} stopOpacity="1" />
               <stop offset="50%" stopColor={lighterColor} stopOpacity="1" />
               <stop offset="100%" stopColor={darkerColor} stopOpacity="1" />
             </linearGradient>
-            <linearGradient id="doorGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id={`door-gradient-${color}`}
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor={lighterColor} stopOpacity="1" />
               <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
               <stop offset="100%" stopColor={darkerColor} stopOpacity="1" />
@@ -80,7 +99,7 @@ export const TrashBin = ({
             width="140"
             height="150"
             rx="8"
-            fill="url(#binGradient)"
+            fill={`url(#gradient-${color})`}
             stroke="#999"
             strokeWidth="1.5"
           />
@@ -140,20 +159,15 @@ export const TrashBin = ({
               transform: isOpen ? "rotateX(180deg)" : "rotateX(0deg)",
             }}
           >
-            {/* Door shape */}
             <path
               d="M 40 80 L 160 80 Q 165 80 165 85 L 160 180 Q 160 185 155 185 L 45 185 Q 40 185 40 180 Z"
-              fill="url(#doorGradient)"
+              fill={`url(#door-gradient-${color})`}
               stroke="#999"
               strokeWidth="1.5"
             />
-
-            {/* Door handle */}
             <rect x="90" y="120" width="20" height="8" rx="4" fill="#666" />
             <circle cx="95" cy="124" r="2" fill="#444" />
             <circle cx="105" cy="124" r="2" fill="#444" />
-
-            {/* Door highlight */}
             <ellipse
               cx="100"
               cy="100"
@@ -174,25 +188,41 @@ export const TrashBin = ({
             opacity="0.15"
           />
         </svg>
+        {/* Label text on the bin */}
+        <span
+          x="100"
+          y="160"
+          textAnchor="middle"
+          fontSize="18"
+          fontWeight="bold"
+          fill="white"
+          className="absolute w-full bottom-[52px] left-[-5px]"
+          style={{
+            textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+            pointerEvents: "none",
+          }}
+        >
+          <div className="flex justify-center items-center">
+            <span className="m-2">{icon}</span> <span>{label}</span>
+          </div>
+        </span>
       </div>
 
-      {label && <p className="text-lg font-semibold">{label}</p>}
-
-      <button
-        onClick={handleClick}
-        style={{ backgroundColor: color }}
-        className="px-6 py-2 rounded-full font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
-      >
-        Open Bin
-      </button>
+      {isChosen && (
+        <div className="text-center">
+          {isCorrect ? (
+            <div className="flex items-center gap-2 text-green-600 font-bold">
+              <CheckCircle size={24} />
+              <span>Correct!</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-red-600 font-bold">
+              <XCircle size={24} />
+              <span>Wrong!</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
-
-//  <TrashBin
-//           color="#e8e8e8"
-//           height={300}
-//           width={250}
-//           label="General Waste"
-//           onClick={() => handleBinOpen('General Waste')}
-//         />

@@ -8,10 +8,11 @@ export const SuccessResult = ({ userSelection, recyclingAdvice, onReplay }) => (
     <div className="text-center">
       <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
       <h3 className="text-xl font-bold text-green-700 mb-3">
-        Félicitations ! C'est CORRECT !
+        Congratulations ! You got the right answer
       </h3>
       <p className="text-sm text-gray-700 italic mb-4">
-        Votre sélection ({TRASH_BINS[userSelection].labelFr}) était la bonne.
+        Your selecton : ({TRASH_BINS[userSelection].labelEn}) was the correct
+        choice.
       </p>
     </div>
     <RecyclingAdvice advice={recyclingAdvice} />

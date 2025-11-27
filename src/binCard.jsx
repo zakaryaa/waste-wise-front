@@ -10,18 +10,21 @@ export const BinCard = ({
   gameState,
 }) => {
   const bin = TRASH_BINS[category];
-  const { labelFr, color, icon } = bin;
+
+  const { labelEn, color, icon } = bin;
 
   return (
     <div
       className={`flex flex-col items-center justify-end p-3`}
       onClick={isSelectable ? () => onClick(category) : undefined}
+      key={category}
     >
       <TrashBin
         color={color}
         height={300}
         width={250}
-        label={`${icon}${labelFr}`}
+        label={labelEn}
+        icon={icon}
         isCorrect={isCorrect}
         isChosen={isChosen}
         gameState={gameState}

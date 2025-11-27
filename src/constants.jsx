@@ -1,9 +1,6 @@
-
-import { Recycle, CheckCircle, XCircle, RefreshCw, Upload, Camera } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
-
 // Constants
-const TRASH_BINS = {
+// eslint-disable-next-line react-refresh/only-export-components
+export const TRASH_BINS = {
   ORGANIC: { color: "#22c55e", labelEn: "Organic", icon: "🌿" },
   RECYCLABLE: { color: "#3b82f6", labelEn: "Recyclable", icon: "♻️" },
   GLASS: { color: "#84cc16", labelEn: "Glass", icon: "🍸" },
@@ -12,5 +9,6 @@ const TRASH_BINS = {
   METAL: { color: "#64748b", labelEn: "Metal", icon: "🔨" },
 };
 
-const CATEGORIES = Object.keys(TRASH_BINS);
-const API_ENDPOINT = "https://api-image-docker-224506120950.europe-west1.run.app/detect";
+export const CATEGORIES = Object.keys(TRASH_BINS);
+export const API_ENDPOINT =
+  "https://api-image-docker-224506120950.europe-west1.run.app/detect";
