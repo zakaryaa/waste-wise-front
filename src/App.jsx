@@ -1,7 +1,7 @@
 import { Recycle } from "lucide-react";
 
 import { useCallback, useRef, useState } from "react";
-import { BinsGrid } from "./BinsGrid";
+import { BinsTable } from "./BinsTable";
 import { API_ENDPOINT, CATEGORIES } from "./Constants";
 import { ErrorResult } from "./ErreurResult";
 import { ErrorSection } from "./ErrorSection";
@@ -224,7 +224,7 @@ const App = () => {
         {(gameState === "awaiting_selection" ||
           gameState === "result_displayed") && (
           <>
-            <BinsGrid
+            <BinsTable
               gameState={gameState}
               onBinClick={checkSelection}
               userSelection={userSelection}

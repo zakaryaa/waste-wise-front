@@ -2,7 +2,7 @@ import { BinCard } from "./BinCard";
 import { CATEGORIES } from "./Constants";
 
 // --- Composant: Grille de Poubelles ---
-export const BinsGrid = ({
+export const BinsTable = ({
   gameState,
   onBinClick,
   userSelection,
