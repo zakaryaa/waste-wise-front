@@ -43,7 +43,6 @@ const App = () => {
     setRecyclingAdvice("");
     setRecyclingUrl("");
 
-
     const formData = new FormData();
     formData.append("file", file);
 
@@ -96,7 +95,8 @@ const App = () => {
         const categoryName = detection.class_name || "GLASS";
         const advice =
           detection.recycling_advice || "Aucun conseil de recyclage fourni.";
-        const image_url = detection.image_url || "";
+        const image_url =
+          "https://images.pexels.com/photos/20138968/pexels-photo-20138968.jpeg";
 
         if (CATEGORIES.includes(categoryName)) {
           setCorrectCategory(categoryName);
@@ -307,6 +307,7 @@ const App = () => {
                 />
               ) : (
                 <ErrorResult
+                  recyclingUrl={recyclingUrl}
                   userSelection={userSelection}
                   correctCategory={correctCategory}
                   recyclingAdvice={recyclingAdvice}

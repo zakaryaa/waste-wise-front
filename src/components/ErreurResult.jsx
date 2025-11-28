@@ -8,6 +8,7 @@ export const ErrorResult = ({
   correctCategory,
   recyclingAdvice,
   onReplay,
+  recyclingUrl
 }) => (
   <div className="p-4 rounded-xl shadow-inner mt-6">
     <div className="text-center">
@@ -21,7 +22,7 @@ export const ErrorResult = ({
         <strong>{TRASH_BINS[correctCategory]?.labelFr}</strong>.
       </p>
     </div>
-    <RecyclingAdvice advice={recyclingAdvice} />
+    <RecyclingAdvice recyclingUrl={recyclingUrl} advice={recyclingAdvice} />
     <ReplayButton onReplay={onReplay} />
   </div>
 );

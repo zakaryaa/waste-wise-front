@@ -5,6 +5,6 @@ export const RecyclingAdvice = ({ advice, recyclingUrl }) => (
     <p className="text-sm text-gray-600">
       {advice || "Aucun conseil de recyclage n'a été trouvé pour cet article."}
     </p>
-<img src={recyclingUrl} alt="" />
+    <img src={recyclingUrl} alt="Image as an advice" className="max-w-3/4" />
   </div>
 );
