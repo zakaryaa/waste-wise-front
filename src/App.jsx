@@ -14,8 +14,7 @@ import { API_ENDPOINT, CATEGORIES } from "./Utils";
 // --- Composant Principal ---
 const App = () => {
   const [gameState, setGameState] = useState("ready");
-  // eslint-disable-next-line no-unused-vars
-  const [uploadedFile, setUploadedFile] = useState(null);
+  const [, setUploadedFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [correctCategory, setCorrectCategory] = useState(null);
   const [recyclingAdvice, setRecyclingAdvice] = useState("");
@@ -127,16 +126,58 @@ const App = () => {
 
   const openCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
+      // Set camera active FIRST so the video element renders
       setCameraActive(true);
-      if (videoRef) {
-        videoRef.current.srcObject = stream;
-      }
+
+      // Get the stream
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+        audio: false,
+      });
+
+      console.log("Stream obtained:", stream);
+
+      // Wait a tick for the DOM to update and videoRef to be available
+      setTimeout(() => {
+        console.log("videoRef.current after timeout:", videoRef.current);
+
+        if (videoRef && videoRef.current) {
+          videoRef.current.srcObject = stream;
+
+          // Wait for loadedmetadata event
+          videoRef.current.onloadedmetadata = () => {
+            console.log("Video metadata loaded, playing...");
+            videoRef.current
+              .play()
+              .then(() => {
+                console.log("Video playing successfully");
+              })
+              .catch((err) => {
+                console.error("Erreur lors de la lecture vidéo:", err);
+              });
+          };
+        } else {
+          console.error("videoRef or videoRef.current is still not available");
+        }
+      }, 0);
     } catch (error) {
-      alert("Impossible d'accéder à la caméra. Vérifiez les permissions.");
-      console.error(error);
+      console.error("Erreur d'accès à la caméra:", error);
+      setCameraActive(false);
+
+      // More specific error messages
+      if (error.name === "NotAllowedError") {
+        alert("Permission refusée. Vérifiez les paramètres de la caméra.");
+      } else if (error.name === "NotFoundError") {
+        alert("Aucune caméra trouvée sur cet appareil.");
+      } else if (error.name === "NotReadableError") {
+        alert("La caméra est déjà utilisée par une autre application.");
+      } else {
+        alert("Impossible d'accéder à la caméra. Vérifiez les permissions.");
+      }
     }
   };
 
@@ -144,26 +185,42 @@ const App = () => {
     if (videoRef && videoRef.current) {
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
+
+      // Get actual video dimensions
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
+
+      if (canvas.width === 0 || canvas.height === 0) {
+        alert("Impossible de capturer la photo. La caméra n'est pas prête.");
+        return;
+      }
+
       context.drawImage(videoRef.current, 0, 0);
 
-      canvas.toBlob((blob) => {
-        const file = new File([blob], "camera-capture.jpg", {
-          type: "image/jpeg",
-        });
-        uploadAndClassify(file);
-        closeCamera();
-      }, "image/jpeg");
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const file = new File([blob], "camera-capture.jpg", {
+              type: "image/jpeg",
+            });
+            console.log("Photo capturée:", file);
+            closeCamera();
+            uploadAndClassify(file);
+          }
+        },
+        "image/jpeg",
+        0.95
+      );
     }
   };
 
   const closeCamera = () => {
     if (videoRef && videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject;
-      stream.getTracks().forEach((track) => track.stop());
-      setCameraActive(false);
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
     }
+    setCameraActive(false);
   };
 
   const globalStyles = `@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }`;
@@ -195,7 +252,9 @@ const App = () => {
               ref={videoRef}
               autoPlay
               playsInline
-              className="w-full max-w-sm rounded-xl shadow-lg border-4 border-blue-400"
+              muted
+              className="w-full max-w-sm h-auto rounded-xl shadow-lg border-4 border-blue-400 bg-black block"
+              style={{ aspectRatio: "4/3", objectFit: "cover" }}
             />
             <div className="flex gap-4 w-full">
               <button
