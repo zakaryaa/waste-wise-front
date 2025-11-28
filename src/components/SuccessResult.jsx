@@ -3,7 +3,7 @@ import { TRASH_BINS } from "../Utils";
 import { RecyclingAdvice } from "./RecycleAdvice";
 import { ReplayButton } from "./ReplayButton";
 // --- Composant: Résultat Correct ---
-export const SuccessResult = ({ userSelection, recyclingAdvice, onReplay }) => (
+export const SuccessResult = ({ userSelection, recyclingAdvice, onReplay,recyclingUrl }) => (
   <div className="p-4 rounded-xl shadow-inner mt-6">
     <div className="text-center">
       <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
@@ -15,7 +15,7 @@ export const SuccessResult = ({ userSelection, recyclingAdvice, onReplay }) => (
         choice.
       </p>
     </div>
-    <RecyclingAdvice advice={recyclingAdvice} />
+    <RecyclingAdvice recyclingUrl={recyclingUrl} advice={recyclingAdvice} />
     <ReplayButton onReplay={onReplay} />
   </div>
 );

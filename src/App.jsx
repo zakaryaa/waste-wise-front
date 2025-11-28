@@ -18,6 +18,7 @@ const App = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [correctCategory, setCorrectCategory] = useState(null);
   const [recyclingAdvice, setRecyclingAdvice] = useState("");
+  const [recyclingUrl, setRecyclingUrl] = useState("");
   const [userSelection, setUserSelection] = useState(null);
   const [cameraActive, setCameraActive] = useState(false);
   const videoRef = useRef(null);
@@ -28,6 +29,7 @@ const App = () => {
     setImagePreviewUrl("");
     setCorrectCategory(null);
     setRecyclingAdvice("");
+    setRecyclingUrl("");
     setUserSelection(null);
   }, []);
 
@@ -39,6 +41,8 @@ const App = () => {
     setGameState("classifying");
     setCorrectCategory(null);
     setRecyclingAdvice("");
+    setRecyclingUrl("");
+
 
     const formData = new FormData();
     formData.append("file", file);
@@ -92,10 +96,14 @@ const App = () => {
         const categoryName = detection.class_name || "GLASS";
         const advice =
           detection.recycling_advice || "Aucun conseil de recyclage fourni.";
+        const image_url = detection.image_url || "";
 
         if (CATEGORIES.includes(categoryName)) {
           setCorrectCategory(categoryName);
           setRecyclingAdvice(advice);
+          setRecyclingUrl(image_url);
+          console.log(image_url);
+
           setGameState("awaiting_selection");
         } else {
           throw new Error(`Catégorie inconnue retournée: ${categoryName}`);
@@ -231,7 +239,7 @@ const App = () => {
       <div className="bg-white p-6 sm:p-10 rounded-2xl shadow-2xl max-w-3xl w-full">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 flex items-center justify-center mb-4">
           <Recycle className="w-8 h-8 text-green-500 mr-3" />
-          Jeu de Triage Écologique
+          Jeu de Triage
         </h1>
         <StatusText gameState={gameState} />
 
@@ -295,6 +303,7 @@ const App = () => {
                   userSelection={userSelection}
                   recyclingAdvice={recyclingAdvice}
                   onReplay={resetGame}
+                  image_url={recyclingUrl}
                 />
               ) : (
                 <ErrorResult

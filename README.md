@@ -7,6 +7,16 @@ A modern React-based frontend application for recycling management, built with V
 ### Prerequisites
 
 - Node.js (v16 or higher recommended)
+
+nvm install
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+```
+install node version 12
+```bash
+nvm install 22.18
+```
+
 - npm or yarn package manager
 
 ### Installation
