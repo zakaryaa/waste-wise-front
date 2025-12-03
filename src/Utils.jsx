@@ -10,7 +10,7 @@ export const TRASH_BINS = {
 };
 
 export const CATEGORIES = Object.keys(TRASH_BINS);
-export const API_ENDPOINT =
- "https://api-image-docker-224506120950.europe-west1.run.app/detect";
+//export const API_ENDPOINT =
+// "https://api-image-docker-224506120950.europe-west1.run.app/detect";
 
-  // export const API_ENDPOINT = "http://127.0.0.1:8000/detect";
+export const API_ENDPOINT = "http://127.0.0.1:8000/detect";

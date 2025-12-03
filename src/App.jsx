@@ -94,8 +94,8 @@ const App = () => {
         const detection = data.detections[0];
         const categoryName = detection.class_name || "GLASS";
         const advice =
-          detection.recycling_advice || "Aucun conseil de recyclage fourni.";
-        const image_url =
+          detection.recycling_advice.text || "Aucun conseil de recyclage fourni.";
+        const image_url =  detection.recycling_advice.image_url ||
           "https://images.pexels.com/photos/20138968/pexels-photo-20138968.jpeg";
 
         if (CATEGORIES.includes(categoryName)) {
@@ -303,7 +303,7 @@ const App = () => {
                   userSelection={userSelection}
                   recyclingAdvice={recyclingAdvice}
                   onReplay={resetGame}
-                  image_url={recyclingUrl}
+                  recyclingUrl={recyclingUrl}
                 />
               ) : (
                 <ErrorResult
