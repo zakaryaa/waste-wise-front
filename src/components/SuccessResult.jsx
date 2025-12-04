@@ -11,7 +11,7 @@ export const SuccessResult = ({ userSelection, recyclingAdvice, onReplay }) => (
         Congratulations ! You got the right answer
       </h3>
       <p className="text-sm text-gray-700 italic mb-4">
-        Your selecton : ({TRASH_BINS[userSelection].labelEn}) was the correct
+        Your selection : ({TRASH_BINS[userSelection].label}) was the correct
         choice.
       </p>
     </div>

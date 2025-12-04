@@ -1,6 +1,4 @@
-import { RefreshCw } from "lucide-react";
-
-// --- Composant: Aperçu et Chargement ---
+import { ClassificationStatus } from "./ClassificationStatus"; // --- Composant: Aperçu et Chargement ---
 export const ImagePreviewSection = ({ imagePreviewUrl, isClassifying }) => (
   <div className="mb-8">
     {imagePreviewUrl && (
@@ -12,14 +10,6 @@ export const ImagePreviewSection = ({ imagePreviewUrl, isClassifying }) => (
         />
       </div>
     )}
-    {isClassifying && (
-      <div className="flex flex-col items-center p-6 bg-blue-50 rounded-lg">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin mb-2" />
-        <p className="text-blue-700 font-semibold">
-          Analyse de l'image par l'API...
-        </p>
-        <p className="text-sm text-blue-500">Veuillez patienter.</p>
-      </div>
-    )}
+    {isClassifying && <ClassificationStatus isClassifying={isClassifying} />}
   </div>
 );

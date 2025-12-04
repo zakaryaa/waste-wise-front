@@ -16,7 +16,7 @@ export const ErrorResult = ({
         Oups ! That was Wrong .
       </h3>
       <p className="text-sm text-gray-700 mb-4">
-        You have choosen <strong>{TRASH_BINS[userSelection]?.labelEn}</strong>.
+        You have choosen <strong>{TRASH_BINS[userSelection]?.label}</strong>.
         The right answer was {correctCategory}
         <strong>{TRASH_BINS[correctCategory]?.labelFr}</strong>.
       </p>

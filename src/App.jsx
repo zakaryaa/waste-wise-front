@@ -1,11 +1,9 @@
-import { Recycle } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
+import Confetti from "react-confetti";
 import { BinsTable } from "./components/BinsTable";
-import { ErrorResult } from "./components/ErreurResult";
 import { ErrorSection } from "./components/ErrorSection";
 import { ImagePreviewSection } from "./components/ImagePreviewSection";
 import { LandingPage } from "./components/Landing";
-import { StatusText } from "./components/StatusText";
 import { SuccessResult } from "./components/SuccessResult";
 import "./index.css";
 import { API_ENDPOINT, CATEGORIES } from "./Utils";
@@ -116,9 +114,22 @@ const App = () => {
     (selectedCategory) => {
       if (gameState !== "awaiting_selection") return;
       setUserSelection(selectedCategory);
-      setGameState("result_displayed");
+
+      if (selectedCategory === correctCategory) {
+        setGameState("result_displayed");
+      } else {
+        // New state for wrong answer: set the selected category
+        // but change state to 'attempt_failed' to show the error
+        setGameState("attempt_failed");
+        setTimeout(() => {
+          // After a short display of the failed attempt,
+          // reset the selection but keep the game in awaiting_selection
+          setUserSelection(null);
+          setGameState("awaiting_selection");
+        }, 1500); // Display the 'shake' animation for 1.5 seconds
+      }
     },
-    [gameState]
+    [gameState, correctCategory]
   );
 
   const handleFileChange = (event) => {
@@ -215,17 +226,17 @@ const App = () => {
   const globalStyles = `@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-green-50 p-4 sm:p-8 font-sans">
+    <div className="min-h-screen bg-linear-to-b from-white to-green-50 p-4 sm:p-8 font-sans">
       <style>{globalStyles}</style>
-      <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl p-6 sm:p-10">
+      <div className="max-w-[1500px] mx-auto bg-white rounded-3xl shadow-2xl p-6 sm:p-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="bg-green-100 rounded-full p-2">
-              <Recycle className="w-7 h-7 text-green-600" />
+              <img src="assets/logo.png" className="w-16"></img>
             </div>
             <div>
-              <div className="font-extrabold text-lg">EcoSort</div>
+              <div className="font-extrabold text-lg">Waste Wise</div>
               <div className="text-xs text-gray-500">
                 Playful waste sorting game
               </div>
@@ -239,7 +250,7 @@ const App = () => {
               Reset
             </button>
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              onClick={resetGame}
               className="text-sm px-3 py-1 rounded-full bg-green-600 text-white shadow hover:brightness-105"
             >
               Home
@@ -247,10 +258,14 @@ const App = () => {
           </div>
         </div>
 
-        <StatusText gameState={gameState} />
-
         {gameState === "error" && (
           <ErrorSection message={recyclingAdvice} onTryAgain={resetGame} />
+        )}
+
+        {gameState === "attempt_failed" && (
+          <div className="text-center text-red-600 font-bold text-xl my-4 p-4 border-2 border-red-300 bg-red-50 rounded-lg animate-pulse">
+            ❌ Oups ! Try again...
+          </div>
         )}
 
         {gameState === "ready" && !cameraActive && (
@@ -296,32 +311,43 @@ const App = () => {
         )}
 
         {(gameState === "awaiting_selection" ||
+          gameState === "attempt_failed" || // Keep bins visible during failed attempt animation
           gameState === "result_displayed") && (
           <>
             <BinsTable
-              gameState={gameState}
+              // Update gameState prop to only allow selection when explicitly awaiting it
+              gameState={
+                gameState === "awaiting_selection"
+                  ? "awaiting_selection"
+                  : "result_displayed"
+              }
               onBinClick={checkSelection}
               userSelection={userSelection}
               correctCategory={correctCategory}
             />
-            {gameState === "result_displayed" &&
-              (userSelection === correctCategory ? (
-                <SuccessResult
-                  userSelection={userSelection}
-                  recyclingAdvice={recyclingAdvice}
-                  onReplay={resetGame}
-                />
-              ) : (
-                <ErrorResult
-                  userSelection={userSelection}
-                  correctCategory={correctCategory}
-                  recyclingAdvice={recyclingAdvice}
-                  onReplay={resetGame}
-                />
-              ))}
+            {gameState === "result_displayed" && (
+              // Only SuccessResult is shown now, as the incorrect attempt logic is in checkSelection
+              <SuccessResult
+                userSelection={userSelection}
+                recyclingAdvice={recyclingAdvice}
+                onReplay={resetGame}
+              />
+            )}
+            {/* ErrorResult is no longer needed here as the child gets a chance to re-try */}
           </>
         )}
       </div>
+      {/* ➡️ NEW: Confetti animation for successful selection */}
+      {gameState === "result_displayed" && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          numberOfPieces={600} // A good number for a big celebration
+          recycle={false} // Only run the animation once
+          gravity={0.1} // Slight lift for confetti
+          tweenDuration={1500} // Longer duration for effect
+        />
+      )}
     </div>
   );
 };

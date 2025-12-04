@@ -4,10 +4,10 @@ import { Upload } from "lucide-react";
 
 // --- Composant: Bouton Téléchargement et Caméra ---
 export const UploadSection = ({ onFileChange, onCameraClick }) => (
-  <div className="flex flex-col items-center justify-center space-y-4">
-    <label className="w-full cursor-pointer bg-green-500 text-white font-semibold py-4 px-6 rounded-full shadow-lg hover:bg-green-600 transition duration-300 flex items-center justify-center text-lg">
+  <div className="flex w-full gap-4 items-center justify-center space-y-4">
+    <label className="w-full mb-0 gap-4 cursor-pointer bg-green-500 text-white font-semibold py-4 px-6 rounded-full shadow-lg hover:bg-green-600 transition duration-300 flex items-center justify-center text-lg">
       <Upload className="w-6 h-6 mr-3" />
-      Télécharger une Image
+      Download an image
       <input
         type="file"
         accept="image/*"
@@ -17,9 +17,9 @@ export const UploadSection = ({ onFileChange, onCameraClick }) => (
     </label>
     <button
       onClick={onCameraClick}
-      className="w-full bg-blue-500 text-white font-semibold py-4 px-6 rounded-full shadow-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center text-lg"
+      className="w-full bg-blue-500 gap-4 text-white font-semibold py-4 px-6 rounded-full shadow-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center text-lg"
     >
-      📷 Ouvrir la Caméra
+      <span>📷</span> <p>Open the camera</p>
     </button>
   </div>
 );

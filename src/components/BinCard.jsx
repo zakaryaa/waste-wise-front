@@ -1,34 +1,27 @@
 import { TRASH_BINS } from "../Utils";
 import { TrashBin } from "./TrashBin";
-// --- Composant: Carte de Poubelle ---
+
+// --- Component: Bin Card Wrapper ---
 export const BinCard = ({
   category,
   onClick,
   isSelectable,
   isCorrect,
   isChosen,
-  gameState,
 }) => {
-  const bin = TRASH_BINS[category];
-
-  const { labelEn, color, icon } = bin;
+  const binData = TRASH_BINS[category];
 
   return (
-    <div
-      className={`flex flex-col items-center justify-end p-3`}
-      onClick={isSelectable ? () => onClick(category) : undefined}
-      key={category}
-    >
+    <div className="p-2 flex justify-center">
       <TrashBin
-        color={color}
-        height={300}
-        width={250}
-        label={labelEn}
-        icon={icon}
+        color={binData.color}
+        borderColor={binData.borderColor}
+        label={binData.label}
+        IconComponent={binData.IconComponent}
         isCorrect={isCorrect}
         isChosen={isChosen}
-        gameState={gameState}
-        onClick={() => {}}
+        isSelectable={isSelectable}
+        onClick={() => onClick(category)}
       />
     </div>
   );

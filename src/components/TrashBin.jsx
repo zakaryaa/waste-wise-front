@@ -1,226 +1,113 @@
 import { CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
+
 export const TrashBin = ({
   color,
+  borderColor,
   label,
-  icon,
+  IconComponent,
   isCorrect,
   isChosen,
   isSelectable,
   onClick,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  let animateState = "idle";
+  if (isChosen) {
+    animateState = isCorrect ? "bounce" : "shake";
+  }
 
   const handleClick = () => {
     if (!isSelectable) return;
-    setIsOpen(false);
-    setTimeout(() => setIsOpen(true), 10);
     onClick?.();
   };
 
-  const handleMouseEnter = () => setIsOpen(true);
-  const handleMouseLeave = () => setIsOpen(false);
+  const getTransform = () => {
+    // Priority 1: Game Result Animation
+    if (animateState === "bounce") return "scale(1.1) translateY(-10px)";
+    if (animateState === "shake") return "translateX(-5px) rotate(-5deg)";
 
-  const getDarkerColor = (hex) => {
-    const num = parseInt(hex.replace("#", ""), 16);
-    const amt = 30;
-    const R = Math.max(0, (num >> 16) - amt);
-    const G = Math.max(0, ((num >> 8) & 0x00ff) - amt);
-    const B = Math.max(0, (num & 0x0000ff) - amt);
-    return `rgb(${R},${G},${B})`;
+    // Priority 2: Interaction Animation
+    if (isHovered && isSelectable) return "scale(1.05) rotate(-2deg)";
+
+    // Default
+    return "scale(1)";
   };
 
-  const getLighterColor = (hex) => {
-    const num = parseInt(hex.replace("#", ""), 16);
-    const amt = 40;
-    const R = Math.min(255, (num >> 16) + amt);
-    const G = Math.min(255, ((num >> 8) & 0x00ff) + amt);
-    const B = Math.min(255, (num & 0x0000ff) + amt);
-    return `rgb(${R},${G},${B})`;
-  };
+  const containerStyle = {
+    borderColor: isChosen ? (isCorrect ? "#22c55e" : "#ef4444") : borderColor,
+    borderWidth: isChosen ? "4px" : "3px",
 
-  const darkerColor = getDarkerColor(color);
-  const lighterColor = getLighterColor(color);
+    // Dynamic Shadow: Green/Red glow when chosen, or Color glow when hovered
+    boxShadow: isChosen
+      ? `0 0 20px ${isCorrect ? "#22c55e" : "#ef4444"}`
+      : isHovered && isSelectable
+      ? `0 10px 25px -5px ${color}80`
+      : "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
 
-  const binStyle = {
+    transform: getTransform(),
+    // We use a spring-like bezier curve for that playful "boing" feel
+    transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
     cursor: isSelectable ? "pointer" : "default",
-    opacity: isSelectable ? 1 : 0.7,
-    transform: isChosen ? "scale(1.05)" : "scale(1)",
-    transition: "all 0.3s ease",
+    opacity: isSelectable ? 1 : 0.6,
+    backgroundColor: "white",
   };
 
   return (
     <div
-      style={binStyle}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-      className="flex flex-col items-center"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      // ➡️ CHANGED w-48 to w-40 AND h-64 to h-60 to make it smaller
+      className="relative flex flex-col items-center justify-between p-3 rounded-3xl w-40 h-60 select-none"
+      style={containerStyle}
     >
+      {/* Header / Status Feedback */}
+      <div className="h-8 w-full flex justify-center items-center absolute top-2 left-0 right-0 z-10">
+        {isChosen && isCorrect && (
+          <div className="bg-white rounded-full p-1 shadow-sm">
+            <CheckCircle className="text-green-500 w-7 h-7 animate-bounce" />
+          </div>
+        )}
+        {isChosen && !isCorrect && (
+          <div className="bg-white rounded-full p-1 shadow-sm">
+            <XCircle className="text-red-500 w-7 h-7 animate-pulse" />
+          </div>
+        )}
+      </div>
+
+      {/* The Character SVG */}
+      {/* ➡️ CHANGED h-32 TO h-28 FOR ICON AREA */}
+      <div className="flex-grow flex items-center justify-center w-full h-28 mt-4">
+        {IconComponent && (
+          // ➡️ CHANGED w-28 h-28 TO w-20 h-20 FOR ICON SIZE
+          <div className="w-24 h-24 drop-shadow-md transition-transform duration-300">
+            <IconComponent isHovered={isHovered} />
+          </div>
+        )}
+      </div>
+
+      {/* Label Area - Styled to look like a sticker */}
       <div
-        className="relative"
-        style={{ width: "212px", height: "250px", perspective: "1000px" }}
+        className="w-full py-1 rounded-xl text-center mt-2 mb-1"
+        style={{ backgroundColor: `${color}25` }}
       >
-        <svg
-          viewBox="0 0 200 300"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full "
-          style={{ filter: "drop-shadow(0 10px 30px rgba(0,0,0,0.3))" }}
-        >
-          <defs>
-            <linearGradient
-              id={`gradient-${color}`}
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="0%"
-            >
-              <stop offset="0%" stopColor={color} stopOpacity="1" />
-              <stop offset="50%" stopColor={lighterColor} stopOpacity="1" />
-              <stop offset="100%" stopColor={darkerColor} stopOpacity="1" />
-            </linearGradient>
-            <linearGradient
-              id={`door-gradient-${color}`}
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="0%"
-            >
-              <stop offset="0%" stopColor={lighterColor} stopOpacity="1" />
-              <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="100%" stopColor={darkerColor} stopOpacity="1" />
-            </linearGradient>
-          </defs>
-
-          {/* Main bin body */}
-          <rect
-            x="30"
-            y="80"
-            width="140"
-            height="150"
-            rx="8"
-            fill={`url(#gradient-${color})`}
-            stroke="#999"
-            strokeWidth="1.5"
-          />
-
-          {/* Left panel shadow */}
-          <rect
-            x="30"
-            y="80"
-            width="15"
-            height="150"
-            rx="8"
-            fill="#cccccc"
-            opacity="0.3"
-          />
-
-          {/* Bottom rounded section */}
-          <ellipse
-            cx="100"
-            cy="230"
-            rx="70"
-            ry="25"
-            fill={color}
-            stroke="#999"
-            strokeWidth="1.5"
-          />
-          <ellipse cx="100" cy="228" rx="70" ry="22" fill={lighterColor} />
-
-          {/* Handle on top */}
-          <rect
-            x="75"
-            y="50"
-            width="50"
-            height="8"
-            rx="4"
-            fill="#888"
-            stroke="#666"
-            strokeWidth="1"
-          />
-          <circle cx="80" cy="54" r="3" fill="#666" />
-          <circle cx="120" cy="54" r="3" fill="#666" />
-
-          {/* Inner bin (visible behind door) */}
-          <path
-            d="M 45 85 L 155 85 L 150 175 L 50 175 Z"
-            fill="#4a4a4a"
-            opacity="0.6"
-          />
-          <path d="M 48 90 L 152 90 L 148 170 L 52 170 Z" fill="#333333" />
-
-          {/* Bin door group */}
-          <g
-            style={{
-              transformOrigin: "100px 80px",
-              transition: isOpen
-                ? "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)"
-                : "none",
-              transform: isOpen ? "rotateX(180deg)" : "rotateX(0deg)",
-            }}
-          >
-            <path
-              d="M 40 80 L 160 80 Q 165 80 165 85 L 160 180 Q 160 185 155 185 L 45 185 Q 40 185 40 180 Z"
-              fill={`url(#door-gradient-${color})`}
-              stroke="#999"
-              strokeWidth="1.5"
-            />
-            <rect x="90" y="120" width="20" height="8" rx="4" fill="#666" />
-            <circle cx="95" cy="124" r="2" fill="#444" />
-            <circle cx="105" cy="124" r="2" fill="#444" />
-            <ellipse
-              cx="100"
-              cy="100"
-              rx="35"
-              ry="25"
-              fill="white"
-              opacity="0.2"
-            />
-          </g>
-
-          {/* Highlight on bin */}
-          <ellipse
-            cx="100"
-            cy="95"
-            rx="45"
-            ry="15"
-            fill="white"
-            opacity="0.15"
-          />
-        </svg>
-        {/* Label text on the bin */}
         <span
-          x="100"
-          y="160"
-          textAnchor="middle"
-          fontSize="18"
-          fontWeight="bold"
-          fill="white"
-          className="absolute w-full bottom-[40px] left-[-5px]"
+          className="font-bold text-base leading-tight block"
           style={{
-            textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-            pointerEvents: "none",
+            color: borderColor,
+            fontFamily: '"Nunito", "Comic Sans MS", sans-serif',
           }}
         >
-          <div className="flex justify-center items-center">
-            <span className="m-2">{icon}</span> <span>{label}</span>
-          </div>
+          {label}
         </span>
       </div>
 
-      {isChosen && (
-        <div className="text-center">
-          {isCorrect ? (
-            <div className="flex items-center gap-2 text-green-600 font-bold">
-              <CheckCircle size={24} />
-              <span>Correct!</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 text-red-600 font-bold">
-              <XCircle size={24} />
-              <span>Wrong!</span>
-            </div>
-          )}
+      {/* "Pick Me" Badge - Only shows when hovering and valid */}
+      {isHovered && isSelectable && (
+        <div className="absolute w-28 text-center -top-3 left-1/2 transform -translate-x-1/2 bg-yellow-300 text-yellow-900 border-2 border-yellow-500 px-3 py-1 rounded-full text-xs font-extrabold shadow-lg animate-bounce">
+          PICK ME!
         </div>
       )}
     </div>
