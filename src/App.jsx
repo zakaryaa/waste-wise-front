@@ -1,17 +1,19 @@
 import { Recycle } from "lucide-react";
-
 import { useCallback, useRef, useState } from "react";
 import { BinsTable } from "./components/BinsTable";
 import { ErrorResult } from "./components/ErreurResult";
 import { ErrorSection } from "./components/ErrorSection";
 import { ImagePreviewSection } from "./components/ImagePreviewSection";
+import { LandingPage } from "./components/Landing";
 import { StatusText } from "./components/StatusText";
 import { SuccessResult } from "./components/SuccessResult";
-import { UploadSection } from "./components/UploadSection";
 import "./index.css";
 import { API_ENDPOINT, CATEGORIES } from "./Utils";
 
-// --- Composant Principal ---
+/* =========================
+   Main App (keeps entire game logic)
+   - When ready && !cameraActive show LandingPage with UploadSection inside hero
+   ========================= */
 const App = () => {
   const [gameState, setGameState] = useState("ready");
   const [, setUploadedFile] = useState(null);
@@ -139,29 +141,17 @@ const App = () => {
         audio: false,
       });
 
-      console.log("Stream obtained:", stream);
-
-      // Wait a tick for the DOM to update and videoRef to be available
       setTimeout(() => {
-        console.log("videoRef.current after timeout:", videoRef.current);
-
         if (videoRef && videoRef.current) {
           videoRef.current.srcObject = stream;
 
           // Wait for loadedmetadata event
           videoRef.current.onloadedmetadata = () => {
             console.log("Video metadata loaded, playing...");
-            videoRef.current
-              .play()
-              .then(() => {
-                console.log("Video playing successfully");
-              })
-              .catch((err) => {
-                console.error("Erreur lors de la lecture vidéo:", err);
-              });
+            videoRef.current.play().catch((err) => {
+              console.error("Erreur lors de la lecture vidéo:", err);
+            });
           };
-        } else {
-          console.error("videoRef or videoRef.current is still not available");
         }
       }, 0);
     } catch (error) {
@@ -203,7 +193,6 @@ const App = () => {
             const file = new File([blob], "camera-capture.jpg", {
               type: "image/jpeg",
             });
-            console.log("Photo capturée:", file);
             closeCamera();
             uploadAndClassify(file);
           }
@@ -226,13 +215,38 @@ const App = () => {
   const globalStyles = `@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }`;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-8 flex items-center justify-center font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-white to-green-50 p-4 sm:p-8 font-sans">
       <style>{globalStyles}</style>
-      <div className="bg-white p-6 sm:p-10 rounded-2xl shadow-2xl max-w-3xl w-full">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 flex items-center justify-center mb-4">
-          <Recycle className="w-8 h-8 text-green-500 mr-3" />
-          Jeu de Triage Écologique
-        </h1>
+      <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl p-6 sm:p-10">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-green-100 rounded-full p-2">
+              <Recycle className="w-7 h-7 text-green-600" />
+            </div>
+            <div>
+              <div className="font-extrabold text-lg">EcoSort</div>
+              <div className="text-xs text-gray-500">
+                Playful waste sorting game
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-3 items-center">
+            <button
+              onClick={resetGame}
+              className="text-sm px-3 py-1 rounded-full bg-white border border-green-200 shadow-sm hover:bg-green-50"
+            >
+              Reset
+            </button>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="text-sm px-3 py-1 rounded-full bg-green-600 text-white shadow hover:brightness-105"
+            >
+              Home
+            </button>
+          </div>
+        </div>
+
         <StatusText gameState={gameState} />
 
         {gameState === "error" && (
@@ -240,12 +254,13 @@ const App = () => {
         )}
 
         {gameState === "ready" && !cameraActive && (
-          <UploadSection
+          <LandingPage
             onFileChange={handleFileChange}
             onCameraClick={openCamera}
           />
         )}
 
+        {/* CAMERA */}
         {cameraActive && (
           <div className="flex flex-col items-center justify-center space-y-4">
             <video

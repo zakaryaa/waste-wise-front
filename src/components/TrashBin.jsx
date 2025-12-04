@@ -55,11 +55,11 @@ export const TrashBin = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-      className="flex flex-col items-center gap-3"
+      className="flex flex-col items-center"
     >
       <div
         className="relative"
-        style={{ width: "250px", height: "300px", perspective: "1000px" }}
+        style={{ width: "212px", height: "250px", perspective: "1000px" }}
       >
         <svg
           viewBox="0 0 200 300"
@@ -196,7 +196,7 @@ export const TrashBin = ({
           fontSize="18"
           fontWeight="bold"
           fill="white"
-          className="absolute w-full bottom-[52px] left-[-5px]"
+          className="absolute w-full bottom-[40px] left-[-5px]"
           style={{
             textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
             pointerEvents: "none",
